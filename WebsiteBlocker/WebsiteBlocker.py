@@ -1,54 +1,45 @@
 from datetime import datetime as dt
 import os
-import time
-
 
 def main():
     timeOfEventStart = getEventStartTime()
     timeOfEventEnd = getEventEndTime()
     ipAddress = getIPAddress().strip()
-    website = open("websites", "r")
-    hostfile = open("hosts", "a")
-    lines = website.readlines()
-    website.close()
+    websitesToBlock = ""
 
     while(True):
         timeNow = dt.now(tz = None).replace(microsecond = 0)
         print(timeNow, timeOfEventStart)
 
-        if (timeOfEventStart == timeNow):
-            time.sleep(2)
+        if timeOfEventStart <= timeNow:
+            with open("websites", "r") as website:
+                websitesToBlock = website.readlines()
 
-            for line in lines:
-                message = str(ipAddress + " " + line)
-                hostfile.write(message)
+            with open("hosts", "r+") as host:
+                hostFile = host.read()
 
-            hostfile.close()
+                for websites in websitesToBlock:
+                    if websites in hostFile:
+                        continue
+                    else:
+                        host.write(ipAddress + " " + websites)
+
             break
-        
 
     while(True):
         timeNow = dt.now(tz = None).replace(microsecond = 0)
         print(timeNow, timeOfEventEnd)
 
-        if (timeOfEventEnd == timeNow):
-            time.sleep(2)
-            hostfile = open("hosts", "r")
-            hostLines = hostfile.readlines()
-            hostfile.close()
+        if timeNow >= timeOfEventEnd:
+            with open("hosts", "r+") as host:
+                hostFile = host.readlines()
+                host.seek(0)
 
-            i = 0
-            while (i < len(hostLines)):
-                for line in lines:
-                    if (line.rstrip('\n') in hostLines[i]):
-                        del hostLines[i]
-                        i -= 1
-                i += 1
+                for line in hostFile:
+                    if not any(page in line for page in websitesToBlock):
+                        host.write(line)
 
-            hostfile = open("hosts", "w")
-
-            for hostLine in hostLines:
-                hostfile.write(hostLine)
+                host.truncate()
 
             break
 
