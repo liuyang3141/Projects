@@ -31,6 +31,11 @@ def calculate(calc):
         calc[operatorIndex - 1] = str(float(calc[operatorIndex -1]) * float(calc[operatorIndex -1]))
         del calc[operatorIndex]
 
+    while 'sqrt' in calc:
+        operatorIndex = calc.index('sqrt')
+        calc[operatorIndex - 1] = str(math.sqrt(float(calc[operatorIndex -1])))
+        del calc[operatorIndex]
+
     while '*' in calc:
         operatorIndex = calc.index('*')
         calc[operatorIndex - 1] = str(float(calc[operatorIndex - 1]) * float(calc[operatorIndex + 1]))
