@@ -4,8 +4,8 @@ import math
 
 def parse(calc):
     while '(' in calc and ')' in calc:
-        start = findLastOpenParen(calc)
-        end = findFirstCloseParen(calc)
+        start = findLastOccurence(calc, '(')
+        end = findFirstOccurence(calc, ')')
         tmp = calc[start:end + 1]
         for i in range(len(tmp) - 1):
             del calc[start + 1]
@@ -13,11 +13,11 @@ def parse(calc):
     
     calculate(calc)
 
-def findLastOpenParen(calc):
-    return len(calc) - calc[-1::-1].index('(') - 1
+def findLastOccurence(someList, elem):
+    return len(someList) - someList[-1::-1].index(elem) - 1
 
-def findFirstCloseParen(calc):
-    return calc.index(')')
+def findFirstOccurence(someList, elem):
+    return someList.index(elem)
 
 def calculate(calc):
     if('(' in calc and ')' in calc):
@@ -65,85 +65,103 @@ def calculate(calc):
 f_num = 0.0
 operator = ""
 calc = []
-numUndos = 50
-undo = [""] * numUndos
+numUndos = 100
+undo = []
 
 def button_click(number):
     current = entry.get()
     entry.delete(0, tk.END)
     calc.append(number)
-    line = str(current) + str(number)
-    entry.insert(0, line)
+    entry.insert(0, str(current) + str(number))
     global undo
 
     if len(undo) <= numUndos:
-        undo.append(line)
+        undo.append(str(number).lstrip('\n'))
     else:
         del undo[0]
-        undo.append(line)
+        undo.append(str(number).lstrip('\n'))
 
 def button_add():
     global operator
-    operator = "+"
+    operator = '+'
     button_click(operator)
     
 def button_mod():
     global operator
-    operator = "%"
+    operator = '%'
     button_click(operator)
 
 def button_div():
     global operator
-    operator = "/"
+    operator = '/'
     button_click(operator)
 
 def button_mult():
     global operator
-    operator = "*"
+    operator = '*'
     button_click(operator)
 
 def button_min():
     global operator
-    operator = "-"
+    operator = '-'
     button_click(operator)
 
 def button_sqr():
     global operator
-    operator = "sqr"
+    operator = 'sqr'
     button_click(operator)
 
 def button_sqrt():
     global operator
-    operator = "sqrt"
+    operator = 'sqrt'
     button_click(operator)
 
 def button_undo():
     global undo
     global calc
+   
     entry.delete(0, tk.END)
-    del undo[len(undo) - 1]
-    entry.insert(0, undo[len(undo) - 1])
-    current = entry.get()
-    calc.clear()
 
-    for elem in current:
-        calc.append(elem)
+    if undo[len(undo) - 2] == '=':
+        undo = undo[:len(undo) - 2]
+    else:
+        del undo[len(undo) - 1]
+
+    if '=' in undo:
+        startIndex = findLastOccurence(undo, '=') + 1
+    else:
+        startIndex = 0
+
+    calc.clear()
+    line = ""
+
+    for index in range(startIndex, len(undo)):
+        line += str(undo[index])
+        calc.append(undo[index])
+
+    entry.insert(0, line)
 
 def button_equal():
+    global calc
+    global undo
     current = entry.get()
     parse(calc)
     display.insert(tk.END, "\n" + current + " = " + calc[0])
     display.see("end")
     entry.delete(0, tk.END)
     entry.insert(0, calc[0])
-    current = entry.get()
-    global undo
-    undo.append(current)
+    undo.append('=')
+    undo.append(calc[0].lstrip('\n'))
 
 def button_clear():
     entry.delete(0, tk.END)
     calc.clear()
 
+def keyPressed(event):
+    button_click(event.char)
+
+def returnPressed(event):
+    button_equal()
 
 #define windows
 window = tk.Tk()
@@ -211,5 +229,8 @@ btn_mod.grid(row = 7, column = 2, sticky = 'nsew')
 btn_add.grid(row = 7, column = 3, sticky = 'nsew')
 btn_equal.grid(row = 7, column = 4, columnspan = 2, sticky = 'nsew')
 
+# Detecting key presses
+window.bind("<Key>", keyPressed)
+window.bind('<Return>', returnPressed)
 # main loop is applied at the end of the file
 window.mainloop()
