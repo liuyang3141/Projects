@@ -125,6 +125,7 @@ def button_undo():
     entry.insert(0, undo[len(undo) - 1])
     current = entry.get()
     calc.clear()
+
     for elem in current:
         calc.append(elem)
 
