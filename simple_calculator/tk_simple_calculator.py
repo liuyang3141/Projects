@@ -65,14 +65,22 @@ def calculate(calc):
 f_num = 0.0
 operator = ""
 calc = []
-i = 1
-result = 0.0
+numUndos = 50
+undo = [""] * numUndos
 
 def button_click(number):
     current = entry.get()
-    entry.delete(0, END)
+    entry.delete(0, tk.END)
     calc.append(number)
-    entry.insert(0, str(current) + str(number))
+    line = str(current) + str(number)
+    entry.insert(0, line)
+    global undo
+
+    if len(undo) <= numUndos:
+        undo.append(line)
+    else:
+        del undo[0]
+        undo.append(line)
 
 def button_add():
     global operator
@@ -110,18 +118,30 @@ def button_sqrt():
     button_click(operator)
 
 def button_undo():
-    return
+    global undo
+    global calc
+    entry.delete(0, tk.END)
+    del undo[len(undo) - 1]
+    entry.insert(0, undo[len(undo) - 1])
+    current = entry.get()
+    calc.clear()
+    for elem in current:
+        calc.append(elem)
 
 def button_equal():
     current = entry.get()
     parse(calc)
     display.insert(tk.END, "\n" + current + " = " + calc[0])
     display.see("end")
-    entry.delete(0, END)
+    entry.delete(0, tk.END)
     entry.insert(0, calc[0])
+    current = entry.get()
+    global undo
+    undo.append(current)
 
 def button_clear():
-    entry.delete(0, END)
+    entry.delete(0, tk.END)
+    calc.clear()
 
 
 #define windows
