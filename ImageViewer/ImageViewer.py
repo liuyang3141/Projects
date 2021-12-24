@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter.constants import BOTH, BOTTOM, E, EW, LEFT, N, NSEW, RIGHT, S, TOP, W, X
+from tkinter.constants import ANCHOR, BOTH, BOTTOM, CENTER, E, EW, LEFT, N, NSEW, RIGHT, S, TOP, W, X
 from PIL import ImageTk, Image
 import os
 
@@ -25,10 +25,12 @@ def btn_forward():
     my_image = ImageTk.PhotoImage(tmp_image)
 
     my_image_frame = tk.Frame(window, width = 1000, height = 1000)
-    my_image_frame.pack(side = TOP)
+    my_image_frame.pack()
+  
 
     my_image_window = tk.Label(my_image_frame, image = my_image)
     my_image_window.pack()
+
 
     index += 1
  
@@ -56,10 +58,12 @@ def btn_backward():
     my_image = ImageTk.PhotoImage(tmp_image)
 
     my_image_frame = tk.Frame(window, width = 1000, height = 1000)
-    my_image_frame.pack(side = TOP)
+    my_image_frame.pack()
+
 
     my_image_window = tk.Label(my_image_frame, image = my_image)
     my_image_window.pack()
+
 
     index -= 1
 
@@ -96,7 +100,6 @@ def reDraw():
     btn_space2 = tk.LabelFrame(btn_frame, width = 350)
     btn_exit = tk.Button(btn_exit_frame, text = 'Exit', command = window.quit)
 
-
     btn_status.grid(row = 0, column = 0)
     btn_space1.grid(row = 0, column = 0)
     btn_bk.grid(row = 0, column = 1)
@@ -119,7 +122,8 @@ tmp_image.thumbnail(size, Image.ANTIALIAS)
 my_image = ImageTk.PhotoImage(tmp_image)
 
 my_image_frame = tk.Frame(window, width = 1000, height = 1000)
-my_image_frame.pack(side = TOP)
+my_image_frame.pack()
+
 
 my_image_window = tk.Label(my_image_frame, image = my_image)
 my_image_window.pack()
@@ -142,7 +146,6 @@ btn_bk = tk.Button(btn_frame, text = '<', command = btn_backward)
 btn_fwd = tk.Button(btn_frame, text = '>', command = btn_forward)
 btn_space2 = tk.LabelFrame(btn_frame, width = 350)
 btn_exit = tk.Button(btn_exit_frame, text = 'Exit', command = window.quit)
-
 
 btn_status.grid(row = 0, column = 0)
 btn_space1.grid(row = 0, column = 0)
