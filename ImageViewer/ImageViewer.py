@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter.constants import ANCHOR, BOTH, BOTTOM, CENTER, E, EW, LEFT, N, NSEW, RIGHT, S, TOP, W, X
+from tkinter.constants import *
 from PIL import ImageTk, Image
 import os
 
