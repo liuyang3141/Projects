@@ -27,10 +27,8 @@ def btn_forward():
     my_image_frame = tk.Frame(window, width = 1000, height = 1000)
     my_image_frame.pack()
   
-
     my_image_window = tk.Label(my_image_frame, image = my_image)
     my_image_window.pack()
-
 
     index += 1
  
@@ -60,10 +58,8 @@ def btn_backward():
     my_image_frame = tk.Frame(window, width = 1000, height = 1000)
     my_image_frame.pack()
 
-
     my_image_window = tk.Label(my_image_frame, image = my_image)
     my_image_window.pack()
-
 
     index -= 1
 
