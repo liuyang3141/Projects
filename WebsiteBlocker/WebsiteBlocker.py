@@ -1,4 +1,5 @@
 from datetime import datetime as dt
+import stat
 import os
 
 def main():
@@ -6,16 +7,22 @@ def main():
     timeOfEventEnd = getEventEndTime()
     ipAddress = getIPAddress().strip()
     websitesToBlock = ""
-
+    websitePath = "websites"
+    hostPath = "hosts"
+ 
     while(True):
         timeNow = dt.now(tz = None).replace(microsecond = 0)
-        print(timeNow, timeOfEventStart)
+        print("Time until event: ",timeNow, timeOfEventStart, end = '\r')
 
         if timeOfEventStart <= timeNow:
-            with open("websites", "r") as website:
+            print('\n')
+            os.system('sudo cp /etc/hosts .')
+            os.system('sudo chmod 646 hosts')
+
+            with open(websitePath, "r") as website:
                 websitesToBlock = website.readlines()
 
-            with open("hosts", "r+") as host:
+            with open(hostPath, "r+") as host:
                 hostFile = host.read()
 
                 for websites in websitesToBlock:
@@ -24,13 +31,18 @@ def main():
                     else:
                         host.write(ipAddress + " " + websites)
 
+            os.system('sudo chmod 644 hosts')
+            os.system('sudo cp hosts /etc/hosts')
             break
 
     while(True):
         timeNow = dt.now(tz = None).replace(microsecond = 0)
-        print(timeNow, timeOfEventEnd)
-
+        print("Time until end of event: ", timeNow, timeOfEventEnd, end = '\r')
+        
         if timeNow >= timeOfEventEnd:
+            print('\n')
+            os.system('sudo chmod 646 hosts')
+
             with open("hosts", "r+") as host:
                 hostFile = host.readlines()
                 host.seek(0)
@@ -41,6 +53,8 @@ def main():
 
                 host.truncate()
 
+            os.system('sudo chmod 644 hosts')
+            os.system('sudo cp hosts /etc/hosts')
             break
 
 def getEventStartTime():
