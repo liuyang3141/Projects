@@ -106,7 +106,6 @@ def calculate(calc):
             del calc[operatorIndex2]
     return str(calc[0])
 
-operator = ""
 calc = []
 numUndos = 100
 undo = []
@@ -118,11 +117,11 @@ def button_click(number):
     global line
     
     if number.isdigit() or number == '.':
-        line += str(number)
+        line += str(number).lstrip()
     else:
         if line != "":
             calc.append(line)
-        calc.append(number)
+        calc.append(str(number).lstrip())
 
         if len(undo) >= numUndos - 2:
             undo = undo[2:len(undo)]
@@ -141,8 +140,10 @@ def button_equal():
     global undo
     global line
     current = entry.get()
+
     if line != "":
         calc.append(line)
+
     line = ""
     parse(calc)
     display.insert(tk.END, "\n" + current + " = " + calc[0])
@@ -178,49 +179,49 @@ def button_undo():
     entry.insert(0, line)
 
 def button_add():
-    global operator
-    operator = '+'
-    button_click(operator)
+    button_click('+')
     
 def button_mod():
-    global operator
-    operator = '%'
-    button_click(operator)
+    button_click('%')
 
 def button_div():
-    global operator
-    operator = '/'
-    button_click(operator)
+    button_click('/')
 
 def button_mult():
-    global operator
-    operator = '*'
-    button_click(operator)
+    button_click('*')
 
 def button_min():
-    global operator
-    operator = '-'
-    button_click(operator)
+    button_click('-')
 
 def button_sqr():
-    global operator
-    operator = 'sqr'
-    button_click(operator)
+    button_click('sqr')
 
 def button_sqrt():
-    global operator
-    operator = 'sqrt'
-    button_click(operator)
+    button_click('sqrt')
 
 def button_clear():
     entry.delete(0, tk.END)
     calc.clear()
 
 def keyPressed(event):
-    button_click(event.char)
+    if event.keysym == 'Shift_L' or event.keysym == 'Shift_R' or event.keysym == 'Control_L' or event.keysym == 'Control_R'\
+    or event.keysym == 'Alt_L' or event.keysym == 'Alt_R' or event.keysym == 'Caps_Lock' or event.keysym == 'Home'\
+    or event.keysym == 'End' or event.keysym == 'Insert' or event.keysym == 'Delete' or event.keysym == 'Up' or event.keysym == 'Down'\
+    or event.keysym == 'Left' or event.keysym == 'Right' or event.keysym == 'Tab' or event.keysym == 'Pause'\
+    or event.keysym == 'Win_L' or event.keysym == 'Win_R' or event.keysym == 'Scroll_Lock' or event.keysym == 'Pause'\
+    or event.keysym == 'F1' or event.keysym == 'F2' or event.keysym == 'F3' or event.keysym == 'F4' or event.keysym == 'F5'\
+    or event.keysym == 'F6' or event.keysym == 'F7' or event.keysym == 'F8' or event.keysym == 'F9' or event.keysym == 'F10'\
+    or event.keysym == 'F11' or event.keysym == 'F12':
+        return
+    else:
+        button_click(event.char)
 
 def returnPressed(event):
     button_equal()
+
+def undoPressed(event):
+    button_undo()
+
 
 #define windows
 window = tk.Tk()
@@ -291,5 +292,9 @@ btn_equal.grid(row = 7, column = 4, columnspan = 2, sticky = 'nsew')
 # Detecting key presses
 window.bind("<Key>", keyPressed)
 window.bind('<Return>', returnPressed)
+window.bind('<KP_Enter>', returnPressed)
+window.bind('<BackSpace>', undoPressed) 
+
+
 # main loop is applied at the end of the file
 window.mainloop()
